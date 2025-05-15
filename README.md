@@ -27,7 +27,7 @@
 
 ### 🔹 Frontend
 - React.js
-- Tailwind CSS (Dark Mode Styling)
+- Tailwind CSS
 - Axios (API Integration)
 
 ### 🔹 Backend
@@ -37,7 +37,7 @@
 - dotenv (for environment variable handling)
 
 ### 🔹 Blockchain
-- [Solana or Ethereum-based] smart contract integration (optional/future enhancement)
+- Solana-based smart contract integration (optional/future enhancement)
 
 ---
 
@@ -71,7 +71,7 @@ cd blocktrack
 
 ### 2️⃣ Setup Backend (Node.js)
 ```
-cd server
+cd backend
 npm install
 npm run start
 ```
@@ -85,12 +85,12 @@ MONGO_URI=mongodb://localhost:27017/blocktrack
 
 3️⃣ Setup Frontend (React.js)
 ```
-cd ../client
+cd ../frontend
 npm install
 npm run dev
 ```
 
-💡 Future Enhancements
+### 💡 Future Enhancements
 🔗 Integrate with Smart Contracts for decentralized ownership
 
 🔐 User roles and login (manufacturer, verifier, user)
