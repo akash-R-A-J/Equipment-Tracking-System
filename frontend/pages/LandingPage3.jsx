@@ -7,7 +7,7 @@ export const LandingPage3 = () => {
       <Navbar2 />
 
       {/* Hero Section */}
-      <section className="dark:bg-gray-950 px-6 py-20 text-center">
+      <section className="dark:bg-gray-950 px-6 py-15 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
           Track Your Equipment on Blockchain
         </h1>
@@ -30,7 +30,7 @@ export const LandingPage3 = () => {
           </Link>
         </div>
 
-        <hr className="my-10 mt-30 mx-auto w-1/2 border-gray-300 dark:border-gray-700" />
+        <hr className="mt-10 mx-auto w-1/2 border-gray-300 dark:border-gray-700" />
       </section>
 
       {/* Features Section */}

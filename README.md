@@ -90,7 +90,7 @@ npm install
 npm run dev
 ```
 
-### 💡 Future Enhancements
+## 💡 Future Enhancements
 🔗 Integrate with Smart Contracts for decentralized ownership
 
 🔐 User roles and login (manufacturer, verifier, user)
