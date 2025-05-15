@@ -25,9 +25,9 @@ export const ManufacturerDashboard = () => {
             <h1 className="text-3xl text-white">Dashboard</h1>
           </div>
           <div className="flex">
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded mr-3">
+            <Link to={"/add-equipment"} state={{from: "manufacturer"}} className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded mr-3">
               + Add Equipment
-            </button>
+            </Link>
             <TransferEquipment />
           </div>
         </header>

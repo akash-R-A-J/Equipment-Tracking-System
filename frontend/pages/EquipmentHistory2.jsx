@@ -1,5 +1,5 @@
 import { ClockIcon } from "@heroicons/react/24/outline";
-import { TimelineItem } from "../pages/TimelineItems";
+import { TimelineItem } from "../utils/TimelineItems";
 import { EquipmentDetailsCard } from "../utils/EquipmentDetailCard";
 
 

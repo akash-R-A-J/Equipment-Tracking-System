@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   UserCircleIcon,
@@ -20,6 +21,7 @@ export function ProfilePage4() {
 
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [darkMode, setDarkMode] = useState(true);
+  const [profile, setProfile] = useState(null);
 
   const from = location.state?.from || "user";
 
@@ -30,6 +32,32 @@ export function ProfilePage4() {
       navigate("/user-dashboard");
     }
   };
+
+  // 🟡 Fetch Profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        console.log(localStorage);
+        console.log(localStorage.getItem("x-auth-token"));
+        console.log(localStorage.getItem("X-Auth-Token"));
+        const response = await axios.get(
+          "http://localhost:5000/api/v0/users/profile",
+          {
+            headers: {
+              "x-auth-token": token,
+            },
+          }
+        );
+        setProfile(response.data.data);
+        console.log(response.data.data);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -46,26 +74,27 @@ export function ProfilePage4() {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-6">
             <img
-              //   src="https://i.pravatar.cc/150?img=3"
-              // src="https://i.pravatar.cc/100"
               src="https://i.pravatar.cc/100"
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover"
             />
             <div>
-              <h2 className="text-2xl font-semibold">Rushi Ghadage</h2>
+              <h2 className="text-2xl font-semibold">
+                {profile?.fullName || "Loading..."}
+              </h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Manufacturing Lead
+                {profile?.designation || "Loading..."}
               </p>
             </div>
           </div>
 
           <div className="space-x-3 flex">
-            {/* <Link > */}
-              <button onClick={handleBack} className="flex items-center space-x-2 px-3 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">
-                Back to Dashboard
-              </button>
-            {/* </Link> */}
+            <button
+              onClick={handleBack}
+              className="flex items-center space-x-2 px-3 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              Back to Dashboard
+            </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="flex items-center space-x-2 px-3 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -102,25 +131,31 @@ export function ProfilePage4() {
 
         {/* Tab Content */}
         <div className="mt-6">
-          {activeTab === "Personal Info" && (
+          {activeTab === "Personal Info" && profile && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <ProfileField label="Full Name" value="Rushi Ghadage" />
-              <ProfileField label="Email" value="rushi@example.com" />
-              <ProfileField label="Phone Number" value="+91 9876543210" />
-              <ProfileField label="Birth Date" value="1999-04-15" />
-              <ProfileField label="Gender" value="Male" />
-              <ProfileField label="Nationality" value="Indian" />
+              <ProfileField label="Full Name" value={profile.fullName} />
+              <ProfileField label="Email" value={profile.email} />
+              <ProfileField label="Phone Number" value={profile.phone} />
+              <ProfileField label="Birth Date" value={profile.birthDate} />
+              <ProfileField label="Gender" value={profile.gender} />
+              <ProfileField label="Nationality" value={profile.nationality} />
             </div>
           )}
 
-          {activeTab === "Employment" && (
+          {activeTab === "Employment" && profile && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <ProfileField label="Designation" value="Manufacturing Lead" />
-              <ProfileField label="Department" value="Operations" />
-              <ProfileField label="Join Date" value="2021-06-01" />
-              <ProfileField label="Location" value="Pune, India" />
-              <ProfileField label="Employee No." value="EMP123456" />
-              <ProfileField label="Employment Type" value="Full-time" />
+              <ProfileField label="Designation" value={profile.designation} />
+              <ProfileField label="Department" value={profile.department} />
+              <ProfileField label="Join Date" value={profile.joiningDate} />
+              <ProfileField label="Location" value={profile.workingLocation} />
+              <ProfileField
+                label="Employee No."
+                value={profile.employeeNumber}
+              />
+              <ProfileField
+                label="Employment Type"
+                value={profile.employmentType}
+              />
             </div>
           )}
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BlockTrackLogo } from "../components/BlocktrackLogo";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const LoginPage = () => {
   const [role, setRole] = useState("");
@@ -11,17 +12,40 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // backend logic
-    
-    if(role === "user"){
-      navigate("/user-dashboard")
-    }else if(role === "manufacturer"){
-      navigate("/manufacturer-dashboard")
+    console.log(`${role} : ${username} : ${password}`);
+
+    try {
+      const response = await axios({
+        method: "POST",
+        url: `http://localhost:5000/api/v0/${
+          role === "user" ? "users" : "manufacturers"
+        }/login`,
+        data: { username, password },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Navigate on success
+      if (role === "user") {
+        navigate("/user-dashboard");
+      } else if (role === "manufacturer") {
+        navigate("/manufacturer-dashboard");
+      }
+      
+      // console.log()
+      localStorage.setItem("role", role);
+      localStorage.setItem("x-auth-token", response.data.token);
+      alert(response.data.message || "Login successful");
+
+      // Clear form fields
+      setRole("");
+      setPassword("");
+      setUsername("");
+    } catch (e) {
+      console.log("Error while logging in: ", e);
+      alert("Login failed. Please check credentials.");
     }
-    console.log(username + " : " + password);
-    setPassword("");
-    setUsername("");
   };
 
   return (
@@ -32,34 +56,32 @@ export const LoginPage = () => {
                   shadow-2xl w-full max-w-xl transition-all border rounded-3xl border-blue-500"
         >
           <h2 className="text-2xl font-bold mb-2 justify-center flex">
-            Sign in to 
-            <BlockTrackLogo/>
+            Sign in to
+            <BlockTrackLogo />
           </h2>
-          
+
           <hr className="w-2/3 mx-auto text-yellow-400 mb-5" />
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label className="block mb-2 font-medium">
-                  Select Role
-                </label>
+              <label className="block mb-2 font-medium">Select Role</label>
 
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 
                         dark:border-gray-600 bg-white dark:bg-gray-700 text-black 
                         dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                >
-                  <option value="" className="text-gray-400">
-                    Select Role
-                  </option>
-                  <option value="user">User</option>
-                  <option value="manufacturer">Manufacturer</option>
-                </select>
-              </div>
-              
+                required
+              >
+                <option value="" className="text-gray-400">
+                  Select Role
+                </option>
+                <option value="user">User</option>
+                <option value="manufacturer">Manufacturer</option>
+              </select>
+            </div>
+
             <div>
               <label className="block mb-2 font-medium">Username</label>
               <input

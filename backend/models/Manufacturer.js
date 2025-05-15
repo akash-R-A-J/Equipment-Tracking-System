@@ -4,7 +4,7 @@ const ManufacturerSchema = new mongoose.Schema({
   // username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   walletAddress: { type: String, required: true, unique: true },
-  fullname: { type: String },
+  fullName: { type: String },
   email: { type: String, required: true, unique: true },
   phone: { type: String },
   profileImage: { type: String }, // image path or URL
@@ -20,4 +20,8 @@ const ManufacturerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now() },
 });
 
-module.exports = mongoose.model("manufacturer", ManufacturerSchema);
+const ManufacturerModel = mongoose.model("manufacturer", ManufacturerSchema);
+
+module.exports = {
+  ManufacturerModel,
+}

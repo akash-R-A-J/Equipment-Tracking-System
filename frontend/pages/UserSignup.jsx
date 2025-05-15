@@ -3,6 +3,7 @@ import { BlockTrackLogo } from "../components/BlocktrackLogo";
 import { inputFieldStyles } from "../styles/formStyles";
 import { CancelButton } from "./LoginPage";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export function UserSignup() {
   const navigate = useNavigate();
@@ -24,11 +25,7 @@ export function UserSignup() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted:", formData);
-    // You can now send `formData` to your backend
-    navigate("/user-dashboard")
+  const clearForm = () => {
     setFormData({
       fullName: "",
       email: "",
@@ -39,6 +36,46 @@ export function UserSignup() {
     });
   };
 
+  // // send data to the backend
+  const sendDataToBackend = async () => {
+    const data = new FormData();
+
+    data.append("fullName", formData.fullName);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("walletAddress", formData.walletAddress);
+    data.append("password", formData.password);
+    if (formData.profileImage) {
+      data.append("profileImage", formData.profileImage);
+    }
+
+    try {
+      const response = await axios({
+        method: "POST",
+        url: "http://localhost:5000/api/v0/users/signup",
+        data,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("You are signed-up successfully.", response.data);
+      alert("You are signed-up successfully.");
+      navigate("/login"); // redirect to login page
+    } catch (error) {
+      console.error("Signup error:", error.response?.data || error.message);
+    } finally {
+      clearForm();
+    }
+  };
+
+  // handle submit for user signup
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitted:", formData);
+    await sendDataToBackend();
+  };
+
   return (
     <div className="h-screen bg-gray-900 inset-0 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50 px-4">
       <div className="dark:bg-gray-950  text-black dark:text-white p-8 rounded-2xl shadow-2xl w-full max-w-4xl border border-blue-500 transition-all">
@@ -46,11 +83,12 @@ export function UserSignup() {
           Sign Up to <BlockTrackLogo />
         </h2>
 
+        {/* user signup form  */}
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Left Column */}
+          {/* left Column */}
           <div className="space-y-6">
             <div>
               <label className="block mb-2 font-medium">Full Name</label>
@@ -92,7 +130,7 @@ export function UserSignup() {
             </div>
           </div>
 
-          {/* Right Column */}
+          {/* right Column */}
           <div className="space-y-6">
             <div>
               <label className="block mb-2 font-medium">Wallet Address</label>
@@ -139,7 +177,7 @@ export function UserSignup() {
             </div>
           </div>
 
-          {/* Full Width Button */}
+          {/* submit and cancel Button */}
           <div className="space-x-2 md:col-span-2 flex justify-end pt-4">
             <CancelButton />
             <button
