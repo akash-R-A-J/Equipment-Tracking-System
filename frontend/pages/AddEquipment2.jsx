@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export function AddEquipmentForm2() {
+  const navigate = useNavigate();
   const [equipment, setEquipment] = useState({
     name: "",
     serialNumber: "",
@@ -22,13 +23,34 @@ export function AddEquipmentForm2() {
 
   const sendDataToBackend = async () => {
     try {
-      // add-equipment url
-      const URL = "";
-      const response = await axios.post(URL);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    } finally {
+      const data = new FormData();
+      data.append("name", equipment.name);
+      data.append("serialNumber", equipment.serialNumber);
+      data.append("currentOwner", equipment.currentOwner);
+
+      if (equipment.equipmentImage) {
+        data.append("equipmentImage", equipment.equipmentImage);
+      }
+
+      if (equipment.document) {
+        data.append("document", equipment.document);
+      }
+
+      const response = await axios.post(
+        "http://localhost:5000/api/v0/equipments/add",
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("Equipment added successfully", response.data);
+      alert("Equipment added successfully!");
+      
+      navigate("/manufacturer-dashboard");
+      
+
+      // Reset form after submission
       setEquipment({
         name: "",
         serialNumber: "",
@@ -36,21 +58,15 @@ export function AddEquipmentForm2() {
         equipmentImage: null,
         document: null,
       });
+    } catch (error) {
+      console.error("Error uploading equipment:", error);
+      alert("Failed to add equipment.");
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(equipment);
-    const formData = new FormData();
-    formData.append("name", equipment.name);
-    formData.append("serialNumber", equipment.serialNumber);
-    formData.append("currentOwner", equipment.currentOwner);
-    formData.append("equipmentImage", equipment.equipmentImage);
-    formData.append("document", equipment.document);
-    useEffect(() => {
-      sendDataToBackend();
-    }, []);
+    sendDataToBackend();
   };
 
   return (
@@ -63,6 +79,7 @@ export function AddEquipmentForm2() {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
+          {/* Name */}
           <div className="col-span-1">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Equipment Name
@@ -78,6 +95,7 @@ export function AddEquipmentForm2() {
             />
           </div>
 
+          {/* Serial Number */}
           <div className="col-span-1">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Serial Number
@@ -93,6 +111,7 @@ export function AddEquipmentForm2() {
             />
           </div>
 
+          {/* Current Owner */}
           <div className="col-span-1 md:col-span-2">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Receiver Wallet/Public Key
@@ -108,6 +127,7 @@ export function AddEquipmentForm2() {
             />
           </div>
 
+          {/* Image Upload */}
           <div className="col-span-1">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Equipment Image
@@ -128,6 +148,7 @@ export function AddEquipmentForm2() {
             )}
           </div>
 
+          {/* PDF Upload */}
           <div className="col-span-1">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Upload Document (PDF)
@@ -146,6 +167,7 @@ export function AddEquipmentForm2() {
             )}
           </div>
 
+          {/* Submit & Cancel */}
           <div className="col-span-1 md:col-span-2 flex justify-end pt-4 space-x-3">
             <Link
               to={"/manufacturer-dashboard"}
@@ -155,7 +177,6 @@ export function AddEquipmentForm2() {
             </Link>
             <button
               type="submit"
-              onClick={handleSubmit}
               className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
             >
               Add Equipment

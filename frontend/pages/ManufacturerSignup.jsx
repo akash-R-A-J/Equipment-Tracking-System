@@ -53,6 +53,7 @@ export function ManufacturerSignup() {
         }
       );
       console.log("Manufacturer signed up successfully", response.data);
+      alert(response.data)
       return response;
     } catch (error) {
       console.error(

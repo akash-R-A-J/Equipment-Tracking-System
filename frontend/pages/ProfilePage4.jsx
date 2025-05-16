@@ -19,18 +19,14 @@ export function ProfilePage4() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const from = location.state?.from || "user";
+  const [role] = useState(from === "user" ? "user" : "manufacturer");
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [darkMode, setDarkMode] = useState(true);
   const [profile, setProfile] = useState(null);
 
-  const from = location.state?.from || "user";
-
   const handleBack = () => {
-    if (from === "manufacturer") {
-      navigate("/manufacturer-dashboard");
-    } else {
-      navigate("/user-dashboard");
-    }
+    navigate(`/${role}-dashboard`);
   };
 
   // 🟡 Fetch Profile
@@ -38,26 +34,27 @@ export function ProfilePage4() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
+        const xauthToken = localStorage.getItem("x-auth-token");
         console.log(localStorage);
-        console.log(localStorage.getItem("x-auth-token"));
-        console.log(localStorage.getItem("X-Auth-Token"));
+        console.log("token: " + token);
+        console.log("x-auth-token: " + localStorage.getItem("x-auth-token"));
         const response = await axios.get(
-          "http://localhost:5000/api/v0/users/profile",
+          `http://localhost:5000/api/v0/${role}s/profile`,
           {
             headers: {
-              "x-auth-token": token,
+              "x-auth-token": xauthToken,
             },
           }
         );
-        setProfile(response.data.data);
-        console.log(response.data.data);
+        setProfile(response.data.manufacturer);
+        console.log(response.data.manufacturer);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [role]);
 
   useEffect(() => {
     if (darkMode) {
@@ -83,7 +80,7 @@ export function ProfilePage4() {
                 {profile?.fullName || "Loading..."}
               </h2>
               <p className="text-gray-500 dark:text-gray-400">
-                {profile?.designation || "Loading..."}
+                {profile?.designation || "Software Developer"}
               </p>
             </div>
           </div>

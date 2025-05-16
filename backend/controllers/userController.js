@@ -43,7 +43,7 @@ const userSignup = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.user.id);
+    const user = await UserModel.findById(req.user.id).select("-password");
 
     if (!user) {
       return res.status(404).json({

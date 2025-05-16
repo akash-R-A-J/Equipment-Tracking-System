@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const sampleEquipments = [
@@ -60,23 +61,44 @@ const sampleEquipments = [
   },
 ];
 
-export function EquipmentPage3({ back }) {
+export function EquipmentPage3() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-
   const from = location.state?.from || "user";
 
-  const handleBack = () => {
-    if (from === "manufacturer") {
-      navigate("/manufacturer-dashboard");
-    } else {
-      navigate("/user-dashboard");
+  const [role] = useState(from === "user" ? "user" : "manufacturer");
+  const [search, setSearch] = useState("");
+  const [equipments, setEquipments] = useState([]);
+
+  useEffect(() => {
+    async function getEquipment() {
+      try {
+        const xauthToken = localStorage.getItem("x-auth-token");
+        const response = await axios({
+          method: "GET",
+          url: `http://localhost:5000/api/v0/${role}s/my-equipment`,
+          headers: {
+            "x-auth-token": xauthToken,
+          },
+        });
+
+        console.log(response.data);
+        setEquipments(response.data);
+      } catch (error) {
+        console.log("error while fetching equipments" + error);
+        alert(error?.response?.data?.message || "Failed to fetch equipment.");
+      }
     }
+
+    getEquipment();
+  }, [role]);
+
+  const handleBack = () => {
+    navigate(`/${role}-dashboard`);
   };
 
-  const filtered = sampleEquipments.filter((eq) =>
-    eq.serial.toLowerCase().includes(search.toLowerCase())
+  const filtered = (equipments?.length ? equipments : []).filter((eq) =>
+    eq.serialNumber.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -112,16 +134,16 @@ export function EquipmentPage3({ back }) {
       </div>
 
       {/* Equipment Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.length ? (
           filtered.map((item) => (
-            <div key={item.id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
+            <div key={item.serialNumber} className="bg-gray-800 p-4 rounded-lg shadow-lg">
               <div className="flex justify-between">
                 <div>
-                  <h3 className="text-xl font-semibold">{item.serial}</h3>
-                  <p className="text-gray-400">Status: {item.status}</p>
-                  <p className="text-gray-400">Owner: {item.owner}</p>
-                  <p className="text-gray-400">Date: {item.date}</p>
+                  <h3 className="text-xl font-semibold">{item.name}</h3>
+                  <p className="text-gray-400">Serial No.: {item.serialNumber}</p>
+                  <p className="text-gray-400">Owner: {item.currentOwner}</p>
+                  <p className="text-gray-400">Date: {item.history}</p>
                 </div>
                 <EquipmentImageComponent />
               </div>

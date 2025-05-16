@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const { ManufacturerModel } = require("../models/Manufacturer");
+const { getEquipment } = require("./equipmentController");
 
 const manufacturerSignup = async (req, res) => {
   try {
@@ -51,6 +52,46 @@ const manufacturerSignup = async (req, res) => {
   }
 };
 
+// get manufacturer details
+const getManufacturer = async (req, res) => {
+  try {
+    const manufacturer = await UserModel.findById(req.user.id).select(
+      "-password"
+    );
+
+    if (!manufacturer) {
+      return res.status(404).json({
+        error: "User not found",
+        message: "No user exists with the provided ID.",
+      });
+    }
+
+    res.status(200).json({ manufacturer });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const myEquipment = async (req, res) => {
+  try {
+    const manufacturer = await ManufacturerModel.findById(req.user.id);
+    const equipments = await getEquipment(manufacturer.walletAddress);
+
+    if (!equipments) {
+      return res.status(200).json("No equipment found");
+    }
+
+    console.log(equipments);
+    res.status(200).json(equipments);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error);
+  }
+};
+
 module.exports = {
   manufacturerSignup,
+  getManufacturer,
+  myEquipment
 };

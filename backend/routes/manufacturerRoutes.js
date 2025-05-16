@@ -2,9 +2,11 @@ const { Router } = require("express");
 const {
   signup,
   manufacturerSignup,
+  getManufacturer,
+  myEquipment,
 } = require("../controllers/manufacturerController");
 const upload = require("../middleware/uploads");
-const { manufacturerLogin } = require("../middleware/auth");
+const { manufacturerLogin, manufacturerAuth } = require("../middleware/auth");
 
 const router = Router();
 
@@ -21,11 +23,10 @@ router.post(
   manufacturerSignup
 );
 router.post("/login", manufacturerLogin);
-// router.post("/logout", (req, res)=>{});
 
 // general endpoint
-// router.get("/profile", (req, res) => {});
-
+router.get("/profile", manufacturerAuth, getManufacturer);
+router.get("/my-equipment", manufacturerAuth, myEquipment);
 // equipment endpoints for manufacturer
 // router.post("/add/equipment", (req, res) => {});
 // router.post("/transfer/equipment", (req, res)=>{});

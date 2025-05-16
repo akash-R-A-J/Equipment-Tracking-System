@@ -9,7 +9,7 @@ const path = require("path");
 // const homeRoute = require("./routes/homeRoutes")
 const userRoute = require("./routes/userRoutes");
 const manufacturerRoute = require("./routes/manufacturerRoutes");
-// const equipmentRoute = require("./routes/equipmentRoutes");
+const equipmentRoute = require("./routes/equipmentRoutes");
 // const transferRoute = require("./routes/transferRoutes");
 
 const app = express();
@@ -28,7 +28,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // routes
 app.use("/api/v0/manufacturers", manufacturerRoute);
 app.use("/api/v0/users", userRoute);
-// app.use("/api/v0/equipments", equipmentRoute);
+app.use("/api/v0/equipments", equipmentRoute);
 // app.use("/api/v0/transfers", transferRoute);
 
 async function start_server() {

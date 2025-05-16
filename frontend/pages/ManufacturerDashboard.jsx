@@ -1,5 +1,5 @@
 // ManufacturerDashboard.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { TransferEquipment } from "./TransferEquipment";
 
@@ -25,7 +25,11 @@ export const ManufacturerDashboard = () => {
             <h1 className="text-3xl text-white">Dashboard</h1>
           </div>
           <div className="flex">
-            <Link to={"/add-equipment"} state={{from: "manufacturer"}} className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded mr-3">
+            <Link
+              to={"/add-equipment"}
+              state={{ from: "manufacturer" }}
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded mr-3"
+            >
               + Add Equipment
             </Link>
             <TransferEquipment />
@@ -102,9 +106,9 @@ export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
       </div>
       <nav className="space-y-4 text-gray-300">
         <SidebarMenuItems name={"Dashboard"} />
-        <SidebarMenuItems name={"My Equipments"} path="/my-equipment"/>
+        <SidebarMenuItems name={"My Equipments"} path="/my-equipment" />
         <SidebarMenuItems name={"Pendings"} />
-        <SidebarMenuItems name={"Profile"} path="/profile"/>
+        <SidebarMenuItems name={"Profile"} path="/profile" />
         <Link
           to={"/"}
           onClick={() => {
@@ -120,7 +124,11 @@ export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
 
 export const SidebarMenuItems = ({ path = "#", name }) => {
   return (
-    <Link to={path} state={{from: "manufacturer"}} className="block hover:text-yellow-400">
+    <Link
+      to={path}
+      state={{ from: "manufacturer" }}
+      className="block hover:text-yellow-400"
+    >
       {name}
     </Link>
   );

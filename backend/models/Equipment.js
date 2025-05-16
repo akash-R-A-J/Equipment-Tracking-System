@@ -4,7 +4,7 @@ const EquipmentSchema = new mongoose.Schema({
   name: { type: String, required: true },
   serialNumber: { type: String, required: true },
   currentOwner: { type: String, required: true }, // user/manufacturer publickey or objectId
-  equipmentImage: { type: Image }, // url or path to image
+  equipmentImage: { type: String }, // url or path to image
   document: { type: String }, // url of path to file
 
   history: [
@@ -17,4 +17,8 @@ const EquipmentSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model("equipments", EquipmentSchema);
+const EquipmentModel = mongoose.model("equipments", EquipmentSchema);
+
+module.exports = {
+  EquipmentModel,
+}

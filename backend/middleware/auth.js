@@ -76,6 +76,7 @@ const userAuth = (req, res, next) => {
 
 const manufacturerAuth = (req, res, next) => {
     const token = req.header("x-auth-token");
+    console.log("token : " + token);
 
   if (!token) {
     return res
