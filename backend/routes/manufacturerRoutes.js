@@ -7,6 +7,7 @@ const {
 } = require("../controllers/manufacturerController");
 const upload = require("../middleware/uploads");
 const { manufacturerLogin, manufacturerAuth } = require("../middleware/auth");
+const { transferEquipment } = require("../controllers/equipmentController");
 
 const router = Router();
 
@@ -27,9 +28,9 @@ router.post("/login", manufacturerLogin);
 // general endpoint
 router.get("/profile", manufacturerAuth, getManufacturer);
 router.get("/my-equipment", manufacturerAuth, myEquipment);
+
 // equipment endpoints for manufacturer
-// router.post("/add/equipment", (req, res) => {});
-// router.post("/transfer/equipment", (req, res)=>{});
+router.post("/transfer-equipment", manufacturerAuth, transferEquipment);
 // router.get("/all-equipment", (req, res) => {});
 // router.get("/pending-equipment", (req, res) => {});
 

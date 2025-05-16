@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   UserCircleIcon,
   IdentificationIcon,
@@ -24,6 +24,8 @@ export function ProfilePage4() {
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [darkMode, setDarkMode] = useState(true);
   const [profile, setProfile] = useState(null);
+  const baseUrl = "http://localhost:5000/uploads/";
+  const imageUrl = profile?.filename ? `${baseUrl}${profile?.filename}` : null; // extended from profile state variable
 
   const handleBack = () => {
     navigate(`/${role}-dashboard`);
@@ -33,11 +35,7 @@ export function ProfilePage4() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
         const xauthToken = localStorage.getItem("x-auth-token");
-        console.log(localStorage);
-        console.log("token: " + token);
-        console.log("x-auth-token: " + localStorage.getItem("x-auth-token"));
         const response = await axios.get(
           `http://localhost:5000/api/v0/${role}s/profile`,
           {
@@ -46,8 +44,9 @@ export function ProfilePage4() {
             },
           }
         );
-        setProfile(response.data.manufacturer);
-        console.log(response.data.manufacturer);
+
+        setProfile(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
       }
@@ -55,6 +54,11 @@ export function ProfilePage4() {
 
     fetchProfile();
   }, [role]);
+
+  useEffect(() => {
+    console.log("Role: " + role);
+    console.log("Profile updated: " + profile);
+  }, [profile, role]);
 
   useEffect(() => {
     if (darkMode) {
@@ -71,10 +75,11 @@ export function ProfilePage4() {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-6">
             <img
-              src="https://i.pravatar.cc/100"
+              src={imageUrl || "https://i.pravatar.cc/100"}
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover"
             />
+
             <div>
               <h2 className="text-2xl font-semibold">
                 {profile?.fullName || "Loading..."}

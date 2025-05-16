@@ -55,7 +55,7 @@ const manufacturerSignup = async (req, res) => {
 // get manufacturer details
 const getManufacturer = async (req, res) => {
   try {
-    const manufacturer = await UserModel.findById(req.user.id).select(
+    const manufacturer = await ManufacturerModel.findById(req.user.id).select(
       "-password"
     );
 
@@ -66,7 +66,7 @@ const getManufacturer = async (req, res) => {
       });
     }
 
-    res.status(200).json({ manufacturer });
+    res.status(200).json(manufacturer);
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({ error: "Internal Server Error" });

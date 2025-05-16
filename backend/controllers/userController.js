@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const { UserModel } = require("../models/User");
+const { getEquipment } = require("./equipmentController");
 
 // signup endpoint for user
 const userSignup = async (req, res) => {
@@ -52,14 +53,33 @@ const getProfile = async (req, res) => {
       });
     }
 
-    res.status(200).json({ data: user });
+    console.log(user);
+    res.status(200).json(user);
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+const myEquipment = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id);
+    const equipments = await getEquipment(user.walletAddress);
+
+    if (!equipments) {
+      return res.status(200).json("No equipment found");
+    }
+
+    console.log(equipments);
+    return res.status(200).json(equipments);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error);
+  }
+};
+
 module.exports = {
   userSignup,
   getProfile,
+  myEquipment,
 };

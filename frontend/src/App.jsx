@@ -13,6 +13,7 @@ import { AddEquipmentForm2 } from "../pages/AddEquipment2";
 import { NotFound } from "../pages/NotFoundPage";
 import { TransferRequests } from "../components/TransferRequests";
 import { PendingTransfers } from "../components/PendingTransfers";
+import { RecentOrders } from "../components/RecentOrders";
 
 function App() {
   return (
@@ -24,11 +25,13 @@ function App() {
       <Route path="/add-equipment" element={<AddEquipmentForm2 />} />
 
       <Route path="/user-dashboard" element={<UserDashboard />}>
+        <Route path="" element={<RecentOrders />} />
         <Route path="transfer-requests" element={<TransferRequests />} />
         <Route path="pending-requests" element={<PendingTransfers />} />
       </Route>
 
       <Route path="/manufacturer-dashboard" element={<ManufacturerDashboard />}>
+        <Route path="" element={<RecentOrders />} />
         <Route path="transfer-requests" element={<TransferRequests />} />
         <Route path="pending-requests" element={<PendingTransfers />} />
       </Route>

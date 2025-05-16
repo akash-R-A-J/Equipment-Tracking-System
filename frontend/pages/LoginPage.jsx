@@ -83,12 +83,12 @@ export const LoginPage = () => {
             </div>
 
             <div>
-              <label className="block mb-2 font-medium">Username</label>
+              <label className="block mb-2 font-medium">Email</label>
               <input
-                type="text"
+                type="email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
+                placeholder="Enter email"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white 
                           dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required

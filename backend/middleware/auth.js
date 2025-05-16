@@ -21,11 +21,12 @@ const userLogin = async (req, res) => {
       .json({ message: "Incorrect password, try with different one!" });
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.USER_JWT_SECRET);
+  const token = jwt.sign(
+    { id: user._id, role: "user" },
+    process.env.USER_JWT_SECRET
+  );
 
-  res
-    .status(200)
-    .json({ message: "Login successful!", token });
+  res.status(200).json({ message: "Login successful!", token });
 };
 
 // sending token to the user for subsequent request
@@ -47,13 +48,54 @@ const manufacturerLogin = async (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: manufacturer._id },
+    { id: manufacturer._id, role: "manufacturer" },
     process.env.MANUFACTURER_JWT_SECRET
   );
 
-  res
-    .status(200)
-    .json({ message: "Login successful!", token });
+  res.status(200).json({ message: "Login successful!", token });
+};
+
+// use when you don't know if it's a user or manufacturer
+// or can be used at all places for authentication
+const generalAuth = (req, res, next) => {
+  const token = req.header("x-auth-token");
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
+
+  try {
+    const decodedUnverified = jwt.decode(token);
+
+    if (!decodedUnverified || !decodedUnverified.role) {
+      return res
+        .status(400)
+        .json({ message: "Invalid token format or missing role" });
+    }
+
+    const { role } = decodedUnverified;
+    console.log("role: " + role);
+    console.log("decodedUnverified: " + decodedUnverified);
+    
+
+    let secret;
+    if (role === "user") {
+      secret = process.env.USER_JWT_SECRET;
+    } else if (role === "manufacturer") {
+      secret = process.env.MANUFACTURER_JWT_SECRET;
+    } else {
+      return res.status(403).json({ message: "Unauthorized role" });
+    }
+
+    const verified = jwt.verify(token, secret);
+
+    req.user = verified;
+    next();
+  } catch (err) {
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
 };
 
 const userAuth = (req, res, next) => {
@@ -75,8 +117,8 @@ const userAuth = (req, res, next) => {
 };
 
 const manufacturerAuth = (req, res, next) => {
-    const token = req.header("x-auth-token");
-    console.log("token : " + token);
+  const token = req.header("x-auth-token");
+  console.log("token : " + token);
 
   if (!token) {
     return res
@@ -98,4 +140,5 @@ module.exports = {
   userAuth,
   manufacturerLogin,
   manufacturerAuth,
+  generalAuth,
 };

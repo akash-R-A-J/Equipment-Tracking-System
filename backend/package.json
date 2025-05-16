@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "@solana/web3.js": "^1.98.2",
     "accepts": "^2.0.0",
     "backend": "file:",
     "bcrypt": "^5.1.1",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEquipments } from "../hooks/Equipments";
 
 const sampleEquipments = [
   {
@@ -68,30 +69,11 @@ export function EquipmentPage3() {
 
   const [role] = useState(from === "user" ? "user" : "manufacturer");
   const [search, setSearch] = useState("");
-  const [equipments, setEquipments] = useState([]);
+  const {equipments, loading, error} = useEquipments(role);
 
-  useEffect(() => {
-    async function getEquipment() {
-      try {
-        const xauthToken = localStorage.getItem("x-auth-token");
-        const response = await axios({
-          method: "GET",
-          url: `http://localhost:5000/api/v0/${role}s/my-equipment`,
-          headers: {
-            "x-auth-token": xauthToken,
-          },
-        });
-
-        console.log(response.data);
-        setEquipments(response.data);
-      } catch (error) {
-        console.log("error while fetching equipments" + error);
-        alert(error?.response?.data?.message || "Failed to fetch equipment.");
-      }
-    }
-
-    getEquipment();
-  }, [role]);
+  console.log(equipments);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   const handleBack = () => {
     navigate(`/${role}-dashboard`);
@@ -134,18 +116,23 @@ export function EquipmentPage3() {
       </div>
 
       {/* Equipment Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {filtered.length ? (
           filtered.map((item) => (
-            <div key={item.serialNumber} className="bg-gray-800 p-4 rounded-lg shadow-lg">
+            <div
+              key={item.serialNumber}
+              className="bg-gray-800 p-4 rounded-lg shadow-lg"
+            >
               <div className="flex justify-between">
                 <div>
                   <h3 className="text-xl font-semibold">{item.name}</h3>
-                  <p className="text-gray-400">Serial No.: {item.serialNumber}</p>
+                  <p className="text-gray-400">
+                    Serial No.: {item.serialNumber}
+                  </p>
                   <p className="text-gray-400">Owner: {item.currentOwner}</p>
-                  <p className="text-gray-400">Date: {item.history}</p>
+                  {/* <p className="text-gray-400">Date: {item.name}</p> */}
                 </div>
-                <EquipmentImageComponent />
+                <EquipmentImageComponent filename={item.equipmentImage} />
               </div>
               <div className="mt-4 flex space-x-2">
                 <button className="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700 transition">
@@ -171,10 +158,24 @@ export function EquipmentPage3() {
   );
 }
 
-export const EquipmentImageComponent = () => {
+export const EquipmentImageComponent = ({ filename }) => {
+  const baseUrl = "http://localhost:5000/uploads/";
+  const imageUrl = filename ? `${baseUrl}${filename}` : null;
+
   return (
-    <div className="h-22 w-22 mr-5 mt-3 rounded-full bg-gray-600 border-3 border-gray-300 text-7xl text-center text-blue-400">
-      #
+    <div className="h-30 w-20 mr-5 mt-3 rounded-full bg-gray-600 border-4 border-gray-300 overflow-hidden flex items-center justify-center">
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt="Equipment"
+          className="object-cover h-full w-full"
+          onError={(e) => {
+            e.target.src = "/fallback.png"; // Optional: fallback image from public folder
+          }}
+        />
+      ) : (
+        <span className="text-2xl text-blue-400">#</span>
+      )}
     </div>
   );
 };

@@ -31,7 +31,7 @@ export const UserDashboard = () => {
             >
               Approve Equipment
             </button>
-            <TransferEquipment />
+            <TransferEquipment role={"user"}/>
           </div>
         </header>
 
@@ -42,43 +42,7 @@ export const UserDashboard = () => {
           <StatsComponent field={"Transferred"} value={"14"} />
         </div>
 
-        {/* Recent Orders Table */}
-        <section className="bg-gray-800 p-5 rounded-lg shadow min-h-2/3">
-          <h2 className="text-xl font-semibold mb-4 text-white">
-            Recent Orders
-          </h2>
-          <table className="w-full table-auto text-gray-300">
-            <TableHeadComponent />
-            <tbody>
-              <TableRowComponent
-                orderId={"ORD-00123"}
-                client={"Tech Corp"}
-                status={"Pending"}
-                date={"2025-05-10"}
-              />
-              <TableRowComponent
-                orderId={"ORD-00124"}
-                client={"Buildit Ltd"}
-                status={"Shipped"}
-                date={"2025-05-09"}
-              />
-              <TableRowComponent
-                orderId={"ORD-00125"}
-                client={"MedTech Inc."}
-                status={"Shipped"}
-                date={"2025-05-07"}
-              />
-              <TableRowComponent
-                orderId={"ORD-00125"}
-                client={"MedTech Inc."}
-                status={"Pending"}
-                date={"2025-05-07"}
-              />
-              {/* More rows as needed */}
-            </tbody>
-          </table>
-        </section>
-        <Outlet/>
+        <Outlet />
       </main>
     </div>
   );
@@ -86,12 +50,13 @@ export const UserDashboard = () => {
 
 export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
   const navigate = useNavigate();
-  
+
   const handleLogout = (e) => {
     localStorage.removeItem("token");
+    localStorage.removeItem("x-auth-token");
     navigate("/");
   };
-  
+
   return (
     <aside
       className={`${
@@ -109,13 +74,21 @@ export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
           <CloseSidebarIcon />
         </button>
       </div>
-      {/* <hr className="text-yellow-400 w-full mb-6 mt-1" /> */}
 
       <nav className="space-y-4 text-gray-300">
-        <SidebarMenuItems name={"Dashboard"} path="/user-dashboard" />
-        <SidebarMenuItems name={"My Equipments"} path="/my-equipment"/>
-        <SidebarMenuItems name={"Transfer Requests"} path="/user-dashboard/transfer-requests"/>
-        <SidebarMenuItems name={"Pending Transfers"} path="/user-dashboard/pending-requests"/>
+        <SidebarMenuItems
+          name={"Dashboard"}
+          path="/user-dashboard"
+        />
+        <SidebarMenuItems name={"My Equipments"} path="/my-equipment" />
+        <SidebarMenuItems
+          name={"Transfer Requests"}
+          path="/user-dashboard/transfer-requests"
+        />
+        <SidebarMenuItems
+          name={"Pending Transfers"}
+          path="/user-dashboard/pending-requests"
+        />
         <SidebarMenuItems name={"Rejected Transfers"} />
         <SidebarMenuItems name={"Profile"} path="/profile" />
         <button
@@ -131,7 +104,11 @@ export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
 
 export const SidebarMenuItems = ({ path = "#", name }) => {
   return (
-    <Link to={path} state={{from: "user"}} className="block hover:text-yellow-400">
+    <Link
+      to={path}
+      state={{ from: "user" }}
+      className="block hover:text-yellow-400"
+    >
       {name}
     </Link>
   );
@@ -143,44 +120,6 @@ const StatsComponent = ({ field, value }) => {
       <h3 className="text-sm text-gray-400">{field}</h3>
       <p className="text-2xl font-bold text-white">{value}</p>
     </div>
-  );
-};
-
-const TableHeadComponent = () => {
-  return (
-    <thead>
-      <tr className="text-left border-b border-gray-700">
-        <th className="pb-2">Serial No.</th>
-        <th className="pb-2">Client</th>
-        <th className="pb-2">Status</th>
-        <th className="pb-2">Date</th>
-        <th className="pb-2">Action</th>
-      </tr>
-    </thead>
-  );
-};
-
-const TableRowComponent = ({ orderId, client, status, date }) => {
-  return (
-    <tr className="border-b border-gray-700">
-      <td className="py-2">{orderId}</td>
-      <td className="py-2">{client}</td>
-      <td
-        className={`py-2 ${
-          status.toLowerCase() === "pending"
-            ? "py-2 text-yellow-400"
-            : "py-2 text-green-400"
-        }`}
-      >
-        {status}
-      </td>
-      <td className="py-2">{date}</td>
-      <td className="py-2">
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 rounded">
-          View Detail
-        </button>
-      </td>
-    </tr>
   );
 };
 

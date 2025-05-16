@@ -1,49 +1,47 @@
-// export const TransferEquipment = () => {
-
 import { useState } from "react";
 import { CancelButton } from "../components/Buttons";
-import { useFetch } from "../hooks/HandleSubmit";
 import { PopupMessage } from "../components/PopupMessage";
+import { useEquipments } from "../hooks/Equipments";
+import axios from "axios";
 
-const ManufacturerTransferURL =
-  "http://localhost:5000/api/v0/manufacturer/transfer/equipmet";
-
-export const TransferEquipment = () => {
+export const TransferEquipment = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
   const [receiverKey, setReceiverKey] = useState("");
-  const [loading, setLoading] = useState("false");
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [popupMessage, setPopupMessage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Get equipments from hook — no extra fetch here
+  const { equipments, loading, error } = useEquipments(role);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    console.log("Serial:", serialNumber, "Receiver:", receiverKey);
+    setSubmitting(true);
+    setPopupMessage("Submitting...");
 
-    const body = {
-      serialNumber,
-      receiverKey,
-    };
+    try {
+      const xauthToken = localStorage.getItem("x-auth-token");
 
-    // placeholder
-    const headers = {
-      Authorization: "x-auth-token",
-    };
+      // POST to backend to transfer equipment
+      const response = await axios.post(
+        `http://localhost:5000/api/v0/${role}/transfer-equipment`,
+        { serialNumber, receiverKey },
+        { headers: { "x-auth-token": xauthToken } }
+      );
 
-    const { loading, data, error } = useFetch(
-      ManufacturerTransferURL, // get this from .env file
-      "POST",
-      body,
-      headers
-    );
-    
-    if (!loading) {
-      setLoading(false);
-      setData(data);
-      setError(error);
+      console.log("response: " + response.data);
+      setPopupMessage("Equipment transferred successfully!");
+      setSerialNumber("");
+      setReceiverKey("");
+      setIsOpen(false);
+    } catch (err) {
+      setPopupMessage(
+        err?.response?.data?.message || "Failed to transfer equipment."
+      );
+    } finally {
+      setSubmitting(false);
+      setTimeout(() => setPopupMessage(null), 3000);
     }
-    setIsOpen(false);
   };
 
   return (
@@ -57,10 +55,7 @@ export const TransferEquipment = () => {
 
       {isOpen && (
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50">
-          <div
-            className="bg-white dark:bg-gray-800 text-black dark:text-white p-8 rounded-2xl 
-                  shadow-2xl w-full max-w-xl transition-all border rounded-3xl border-blue-500"
-          >
+          <div className="bg-white dark:bg-gray-800 text-black dark:text-white p-8 rounded-2xl shadow-2xl w-full max-w-xl transition-all border rounded-3xl border-blue-500">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Transfer Equipment
             </h2>
@@ -70,20 +65,21 @@ export const TransferEquipment = () => {
                 <label className="block mb-2 font-medium">
                   Select Equipment (Serial Number)
                 </label>
-
                 <select
                   value={serialNumber}
                   onChange={(e) => setSerialNumber(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 
-                        dark:border-gray-600 bg-white dark:bg-gray-700 text-black 
-                        dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                  disabled={loading || error}
                 >
                   <option value="" className="text-gray-400">
-                    Choose equipment
+                    {loading ? "Loading equipment..." : "Choose equipment"}
                   </option>
-                  <option value="EQ001">EQ001</option>
-                  <option value="EQ002">EQ002</option>
+                  {equipments.map((eq) => (
+                    <option key={eq.serialNumber} value={eq.serialNumber}>
+                      {eq.serialNumber}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -96,8 +92,7 @@ export const TransferEquipment = () => {
                   value={receiverKey}
                   onChange={(e) => setReceiverKey(e.target.value)}
                   placeholder="Enter recipient's public key"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white 
-                          dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -106,12 +101,10 @@ export const TransferEquipment = () => {
                 <CancelButton setIsOpen={setIsOpen} />
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition"
-                  onClick={(e) => {
-                    handleSubmit(e);
-                  }}
+                  className="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition disabled:opacity-50"
+                  disabled={submitting}
                 >
-                  Submit
+                  {submitting ? "Submitting..." : "Submit"}
                 </button>
               </div>
             </form>
@@ -119,12 +112,8 @@ export const TransferEquipment = () => {
         </div>
       )}
 
-      {/* alert/message/result after the form submission */}
-      {/* {loading && <PopupMessage message={"loading..."} />}
-
-      {data && <PopupMessage message={data} />}
-
-      {error && <PopupMessage message={error} />} */}
+      {popupMessage && <PopupMessage message={popupMessage} />}
+      {error && <PopupMessage message={error} />}
     </div>
   );
 };
