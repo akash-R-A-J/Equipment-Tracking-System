@@ -69,7 +69,7 @@ export function EquipmentPage3() {
 
   const [role] = useState(from === "user" ? "user" : "manufacturer");
   const [search, setSearch] = useState("");
-  const {equipments, loading, error} = useEquipments(role);
+  const { equipments, loading, error } = useEquipments(role);
 
   console.log(equipments);
   if (loading) return <p>Loading...</p>;
@@ -116,25 +116,25 @@ export function EquipmentPage3() {
       </div>
 
       {/* Equipment Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filtered.length ? (
           filtered.map((item) => (
             <div
               key={item.serialNumber}
-              className="bg-gray-800 p-4 rounded-lg shadow-lg"
+              className="bg-gray-800 p-5 pr-20 rounded-lg shadow-lg"
             >
-              <div className="flex justify-between">
-                <div>
-                  <h3 className="text-xl font-semibold">{item.name}</h3>
-                  <p className="text-gray-400">
-                    Serial No.: {item.serialNumber}
-                  </p>
-                  <p className="text-gray-400">Owner: {item.currentOwner}</p>
-                  {/* <p className="text-gray-400">Date: {item.name}</p> */}
-                </div>
-                <EquipmentImageComponent filename={item.equipmentImage} />
+              {/* <div className="flex justify-between"> */}
+              <EquipmentImageComponent filename={item.equipmentImage} />
+              {/* <div> */}
+              <div className="ml-3">
+                <h3 className="text-xl font-semibold">{item.name}</h3>
+                <p className="text-gray-400">Serial No.: {item.serialNumber}</p>
+                <p className="text-gray-400">Owner: {item.currentOwner}</p>
+                {/* <p className="text-gray-400">Date: {item.name}</p> */}
               </div>
-              <div className="mt-4 flex space-x-2">
+
+              {/* </div> */}
+              <div className="mt-4 ml-3 flex space-x-2">
                 <button className="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700 transition">
                   Transfer
                 </button>
@@ -147,6 +147,8 @@ export function EquipmentPage3() {
                     </Link> */}
               </div>
             </div>
+
+            // </div>
           ))
         ) : (
           <div className="col-span-4 text-center text-lg text-gray-400">
@@ -163,7 +165,7 @@ export const EquipmentImageComponent = ({ filename }) => {
   const imageUrl = filename ? `${baseUrl}${filename}` : null;
 
   return (
-    <div className="h-30 w-20 mr-5 mt-3 rounded-full bg-gray-600 border-4 border-gray-300 overflow-hidden flex items-center justify-center">
+    <div className="h-auto max-h-50 w-100 m-3 rounded-md bg-gray-600 border-4 border-gray-300 overflow-hidden flex items-center justify-center">
       {imageUrl ? (
         <img
           src={imageUrl}

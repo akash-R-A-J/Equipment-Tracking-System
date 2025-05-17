@@ -117,6 +117,7 @@ const userAuth = (req, res, next) => {
 };
 
 const manufacturerAuth = (req, res, next) => {
+  console.log("dfghjkiuyfdfh");
   const token = req.header("x-auth-token");
   console.log("token : " + token);
 

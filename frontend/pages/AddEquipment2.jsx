@@ -7,7 +7,7 @@ export function AddEquipmentForm2() {
   const [equipment, setEquipment] = useState({
     name: "",
     serialNumber: "",
-    currentOwner: "",
+    // currentOwner: "",
     equipmentImage: null,
     document: null,
   });
@@ -26,7 +26,7 @@ export function AddEquipmentForm2() {
       const data = new FormData();
       data.append("name", equipment.name);
       data.append("serialNumber", equipment.serialNumber);
-      data.append("currentOwner", equipment.currentOwner);
+      // data.append("currentOwner", equipment.currentOwner);
 
       if (equipment.equipmentImage) {
         data.append("equipmentImage", equipment.equipmentImage);
@@ -36,25 +36,29 @@ export function AddEquipmentForm2() {
         data.append("document", equipment.document);
       }
 
+      const xauthToken = localStorage.getItem("x-auth-token");
+      console.log(xauthToken);
       const response = await axios.post(
         "http://localhost:5000/api/v0/equipments/add",
         data,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "x-auth-token": xauthToken,
+          },
         }
       );
 
       console.log("Equipment added successfully", response.data);
       alert("Equipment added successfully!");
-      
+
       navigate("/manufacturer-dashboard");
-      
 
       // Reset form after submission
       setEquipment({
         name: "",
         serialNumber: "",
-        currentOwner: "",
+        // currentOwner: "",
         equipmentImage: null,
         document: null,
       });
@@ -70,7 +74,7 @@ export function AddEquipmentForm2() {
   };
 
   return (
-    <div className="h-screen bg-white dark:bg-gray-900 pt-20">
+    <div className="h-screen bg-white dark:bg-gray-900 pt-30">
       <div className="max-w-3xl mx-auto p-8 bg-gray-950 rounded-2xl shadow-xl border border-gray-300 dark:border-blue-500">
         <h2 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-white">
           Add Equipment
@@ -112,7 +116,7 @@ export function AddEquipmentForm2() {
           </div>
 
           {/* Current Owner */}
-          <div className="col-span-1 md:col-span-2">
+          {/* <div className="col-span-1 md:col-span-2">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Receiver Wallet/Public Key
             </label>
@@ -125,7 +129,7 @@ export function AddEquipmentForm2() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
             />
-          </div>
+          </div> */}
 
           {/* Image Upload */}
           <div className="col-span-1">
@@ -168,7 +172,7 @@ export function AddEquipmentForm2() {
           </div>
 
           {/* Submit & Cancel */}
-          <div className="col-span-1 md:col-span-2 flex justify-end pt-4 space-x-3">
+          <div className="col-span-1 md:col-span-2 flex justify-center pt-4 space-x-3">
             <Link
               to={"/manufacturer-dashboard"}
               className="flex items-center px-5 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"

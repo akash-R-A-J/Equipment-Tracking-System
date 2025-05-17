@@ -15,9 +15,9 @@ export const Navbar2 = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50 transition">
+    <nav className="bg-white dark:bg-gray-950 shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50 transition">
       <div className="text-2xl font-bold text-blue-900 dark:text-white">
-        BlockTrack
+        <img src="/blocktrack_logo.png" alt="blocktrack_logo" className="w-2/5 h-auto" />
       </div>
 
       <ul className="hidden md:flex gap-6 text-gray-700 dark:text-gray-300 font-medium ml-38">

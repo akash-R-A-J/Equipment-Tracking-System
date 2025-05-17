@@ -1,9 +1,10 @@
-const { sign } = require("jsonwebtoken");
 const { EquipmentModel } = require("../models/Equipment");
 const { ManufacturerModel } = require("../models/Manufacturer");
 const { TransferRequestModel } = require("../models/TransferRequest");
 const { UserModel } = require("../models/User");
 const solanaWeb3 = require("@solana/web3.js");
+const { MemoProgram } = require("@solana/spl-memo");
+const { TransactionInstruction, PublicKey } = require("@solana/web3.js");
 
 const transferRequests = async (req, res) => {
   try {
@@ -38,11 +39,11 @@ const transferRequests = async (req, res) => {
 };
 
 // Helper to add history entry to equipment
-async function addHistory(equipment, action, user, transaction = null) {
+async function addHistory(equipment, action, user, signature = null) {
   equipment.history.push({
     action,
     user,
-    transaction,
+    signature,
     timestamp: new Date(),
   });
   await equipment.save();
@@ -135,13 +136,40 @@ const updateTransferStatus = async (req, res) => {
 
       const fromPublicKey = new solanaWeb3.PublicKey(transfer.sender);
       const toPublicKey = new solanaWeb3.PublicKey(transfer.receiver);
+      const memoText = `Transfer: Sender [${fromPublicKey.toBase58()}] sent equipment [Serial: ${
+        transfer.serialNumber
+      }] to Receiver [${toPublicKey.toBase58()}]`;
+
+      const memoInstruction = new TransactionInstruction({
+        keys: [
+          {
+            pubkey: fromPublicKey,
+            isSigner: true,
+            isWritable: false,
+          },
+        ],
+        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"), // Memo Program ID
+        data: Buffer.from(memoText, "utf8"),
+      });
+
+      //   const transaction = new solanaWeb3.Transaction().add(
+      //     solanaWeb3.SystemProgram.transfer({
+      //       fromPubkey: fromPublicKey,
+      //       toPubkey: toPublicKey,
+      //       lamports: 1000,
+      //     }),
+      //   MemoProgram.memo({
+      //       memo: memoText,
+      //     })
+      //   );
 
       const transaction = new solanaWeb3.Transaction().add(
         solanaWeb3.SystemProgram.transfer({
           fromPubkey: fromPublicKey,
           toPubkey: toPublicKey,
-          lamports: 1000, // Use real lamports or custom instructions
-        })
+          lamports: 1000,
+        }),
+        memoInstruction
       );
 
       // Get fresh blockhash right before sending
@@ -196,6 +224,8 @@ const submitSignedTransaction = async (req, res) => {
       return res.status(404).json({ message: "Transfer not found." });
     }
 
+    // serial number, sender walletaddress, receiver walletaddress
+
     if (transfer.status !== "pending") {
       return res.status(400).json({
         message: "Only pending transfers can be accepted after confirmation.",
@@ -221,9 +251,9 @@ const submitSignedTransaction = async (req, res) => {
 
     await addHistory(
       equipment,
-      "transfer accepted (confirmed on-chain)",
+      "accepted (confirmed on-chain)",
       userId,
-      transfer._id.toString()
+      signature
     );
 
     console.log("equipment: " + equipment);

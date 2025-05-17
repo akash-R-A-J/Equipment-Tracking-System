@@ -30,7 +30,7 @@ export const TransferEquipment = ({ role }) => {
       );
 
       console.log("response: " + response.data);
-      setPopupMessage("Equipment transferred successfully!");
+      setPopupMessage("Transfer request sent successfully!");
       setSerialNumber("");
       setReceiverKey("");
       setIsOpen(false);

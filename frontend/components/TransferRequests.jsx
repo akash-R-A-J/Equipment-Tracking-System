@@ -21,7 +21,6 @@ export const TransferRequests = () => {
 
   // Handle Accept / Reject click
   const handleAction = async (id, newStatus) => {
-    // Optimistically update UI
     setLocalTransfers((prev) =>
       prev.map((t) => (t._id === id ? { ...t, status: newStatus } : t))
     );

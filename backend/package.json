@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "@solana/spl-memo": "^0.2.5",
     "@solana/web3.js": "^1.98.2",
     "accepts": "^2.0.0",
     "backend": "file:",

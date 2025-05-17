@@ -4,10 +4,14 @@ const { TransferRequestModel } = require("../models/TransferRequest");
 
 const addEquipment = async (req, res) => {
   try {
-    const { name, serialNumber, currentOwner } = req.body;
+    const userId = req.user.id;
+    const { name, serialNumber } = req.body;
     const equipmentImage = req.files["equipmentImage"]?.[0]?.filename;
     const document = req.files["document"]?.[0]?.filename;
-
+    
+    const user = await ManufacturerModel.findById(userId);
+    const currentOwner = user.walletAddress;
+    
     const existing = await EquipmentModel.findOne({
       serialNumber,
       currentOwner,

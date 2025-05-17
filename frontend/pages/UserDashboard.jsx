@@ -78,7 +78,7 @@ export const SidebarComponent = ({ openSidebar, setOpenSidebar }) => {
       <nav className="space-y-4 text-gray-300">
         <SidebarMenuItems
           name={"Dashboard"}
-          path="/user-dashboard"
+          path=""
         />
         <SidebarMenuItems name={"My Equipments"} path="/my-equipment" />
         <SidebarMenuItems

@@ -116,6 +116,7 @@ export const useUpdateTransfer = () => {
         const res = await sendSignedTransaction(id, signedTxSerialized);
         console.log("done successfully");
         console.log("response after done: " + res.data);
+        alert(res.data.message);
       }
 
       setLoading(false);
