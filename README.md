@@ -60,6 +60,10 @@
 
 ---
 
+## 🔁 Control Flow
+
+![control-flow](https://github.com/user-attachments/assets/103a7af1-9815-4a30-afac-96f4a5e09653)
+
 ## ⚙️ Setup Instructions
 
 ### 1️⃣ Clone the Repository
@@ -73,14 +77,26 @@ cd blocktrack
 ```
 cd backend
 npm install
-npm run start
+npm run dev
 ```
 
-Create .env file:
+Create .env file: (refer to example.env file)
 
 ```
+# Server configuration
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/blocktrack
+
+# Bcrypt salt rounds for password hashing (number)
+SALT_ROUND=10
+
+# JWT secrets (use strong, random strings)
+USER_JWT_SECRET="your_user_jwt_secret_here"
+ADMIN_JWT_SECRET="your_admin_jwt_secret_here"
+MANUFACTURER_JWT_SECRET="your_manufacturer_jwt_secret_here"
+
+# MongoDB connection string
+MONGO_URI="your_mongodb_connection_uri_here"
+
 ```
 
 3️⃣ Setup Frontend (React.js)
@@ -134,16 +150,12 @@ npm run dev
 ### 🧑‍💼 User Dashboard  
 ![user_dashboard](https://github.com/user-attachments/assets/c980077c-aacf-4fc7-b752-3b61e041ecf4)
 
-### 🏗️ Manufacturer Dashboard  
-![manufacturer_dashboard](https://github.com/user-attachments/assets/959f1c60-4677-47ad-981b-b50362147d03)
+### 🏗️ Manufacturer Dashboard 
+![manufacturer_dashboard](https://github.com/user-attachments/assets/5df824f0-83a7-4183-bfd3-d5fcccfe84c1)
 
 ### ➕ Add Equipment Form  
 ![add_equipment](https://github.com/user-attachments/assets/244b6af1-6a80-4d5a-9710-f5d46421e5b0)
 
 ### 🔁 Transfer Equipment Form
 ![transfer_equipment](https://github.com/user-attachments/assets/5f770763-9efc-4bce-906c-69a78f994374)
-
-
-
-
 
